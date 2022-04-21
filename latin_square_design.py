@@ -13,7 +13,7 @@ if __name__ == '__main__':
         [2, 3, 4, 0, 1],
         [1, 2, 3, 4, 0],
     ])
-    best = [np.inf * 20]
+    best = [np.inf] * 20
     rng = np.random.default_rng(0)
     for idx in permutations(np.arange(5)):
         mat1 = mat0[:, idx]
