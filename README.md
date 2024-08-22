@@ -1,7 +1,7 @@
 This repository contains scripts to run dynamic object category localizers using PsychoPy and Python 3.
 
 ## Usage
-**Change the `SUBJECT` and `RUN` variables in `localizer.py`, and run `localizer.py` with PsychoPy.**
+**Run `main.py` with PsychoPy for the experiment. Update `sid.txt` in the parent folder at the start of each scanning session.**
 **The task for the participant is a 1-back task.**
 
 The script was tested using Standalone PsychoPy 2021.2.3 for macOS.
@@ -9,9 +9,9 @@ The script was tested using Standalone PsychoPy 2021.2.3 for macOS.
 ## Design
 The localizer comprises 5 categories, namely faces, bodies, scenes, objects, and scrambled objects. It uses a fully counterbalanced design and has 5 runs in total.
 
-Each run comprises 10 blocks, 2 per category. The categories in the last 5 blocks are those of the first 5 blocks in reverse order (but with different video clips). Each block lasts 18 seconds. It comprises 6 clips, 3 seconds each. There is one repeated clip per category per run.
+Each run comprises 10 blocks, 2 per category. In each run, the categories in the last 5 blocks are those of the first 5 blocks in reverse order (but with different video clips). Each block lasts 18 seconds. It comprises 6 clips, 3 seconds each. There is one repeated clip per category per run.
 
-Besides the object category blocks, there are three fixation blocks in the beginning, the middle, and the end, respectively. Each fixation block also lasts 18 seconds.
+Besides the object category blocks, there are three fixation blocks in the beginning, in the middle, and at the end of each run. Each fixation block also lasts 18 seconds.
 
 In total, each run lasts 234 seconds ((5 * 2 + 3) * 18 seconds).
 
