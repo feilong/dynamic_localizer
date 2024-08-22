@@ -43,9 +43,9 @@ if __name__ == '__main__':
             clips[fn]  = visual.MovieStim3(
                 win, fn, size=(1472, 1080), name=fn, noAudio=True, loop=True)
 
-    fixation = visual.TextStim(win, text='+', height=50, pos=(0, 0), color='#FFFFFF')
-    intro_text = "Please pay attention to these clips.\n\nPress the left button (button 1) whenever you see an exact repeat."
-    intro = visual.TextStim(win, text=intro_text, height=80, wrapWidth=1300, alignText='left')
+    fixation = visual.TextStim(win, text='+', height=80, pos=(0, 0), color='#FFFFFF')
+    intro_text = "Please pay attention to these clips.\n\nPress the left button (button 1) whenever you see an immediate repeat of the same clip."
+    intro = visual.TextStim(win, text=intro_text, height=70, wrapWidth=1400, alignText='left')
 
     intro.draw()
     win.flip()
