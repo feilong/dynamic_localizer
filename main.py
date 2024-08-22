@@ -8,26 +8,32 @@ from psychopy import prefs
 prefs.general['audioLib'] = ['pygame']
 from psychopy import visual, event, core
 
-SUBJECT = 'test'
-RUN = 1
-
 
 if __name__ == '__main__':
-    assert RUN in [1, 2, 3, 4, 5]
-    with open(f'runs/{RUN}.json', 'r') as f:
+    # read subject ID
+    with open("../sid.txt", "r") as file:
+        sid = file.read() 
+    
+    # automatically update run number
+    logs = glob(f'logs/{sid}*finish.json')
+    runs = [int(log.split('_')[1][3:]) for log in logs]
+    run_ = 1 if not runs else max(runs) + 1
+    assert run_ in [1, 2, 3, 4, 5]
+
+    with open(f'runs/{run_}.json', 'r') as f:
         run_info = json.load(f)
     timelabel = datetime.now().strftime('%Y%m%d-%H%M%S')
     os.makedirs('logs', exist_ok=True)
-    out_fn = f'logs/{SUBJECT}_{RUN}_{timelabel}.json'
-    results = {'stim_events': [], 'key_events': [], 'subject': SUBJECT, 'run': RUN}
+    finish_fn = f'logs/{sid}_run{run_}_{timelabel}_finish.json'
+    start_fn = f'logs/{sid}_run{run_}_{timelabel}_start.json'
+    results = {'stim_events': [], 'key_events': [], 'subject': sid, 'run': run_}
 
-    event.globalKeys.add(
-        key='q', modifiers=['ctrl'], func=core.quit)
+    event.globalKeys.clear()
+    event.globalKeys.add(key='q', modifiers=['ctrl'], func=os._exit, func_args=[1], func_kwargs=None)
 
     win = visual.Window(
-        size=[1280, 1024], allowGUI=False, units='pix',
-        screen=1, rgb=[-1, -1, -1], fullscr=True)
-
+        size=[1920, 1080], allowGUI=False, units='pix',
+        screen=0, color='#000000', fullscr=True)
 
     clips = {}
     # for fn in sorted(glob(os.path.join('stimuli', '*', '*.mp4'))):
@@ -35,11 +41,11 @@ if __name__ == '__main__':
         fn = trial[0]
         if fn not in clips:
             clips[fn]  = visual.MovieStim3(
-                win, fn, size=(1280, 940), name=fn, noAudio=True, loop=True)
+                win, fn, size=(1472, 1080), name=fn, noAudio=True, loop=True)
 
-    fixation = visual.TextStim(win, text='+', height=31, pos=(0, 0), color='#FFFFFF')
-    intro_text = "Please pay attention to these clips.\nPress the first (left) button whenever you see a repeated clip."
-    intro = visual.TextStim(win, text=intro_text, height=31, wrapWidth=900)
+    fixation = visual.TextStim(win, text='+', height=50, pos=(0, 0), color='#FFFFFF')
+    intro_text = "Please pay attention to these clips.\n\nPress the left button (button 1) whenever you see an exact repeat."
+    intro = visual.TextStim(win, text=intro_text, height=80, wrapWidth=1300, alignText='left')
 
     intro.draw()
     win.flip()
@@ -50,6 +56,9 @@ if __name__ == '__main__':
     clock = core.Clock()
     exp_start_time = datetime.now() - timedelta(seconds=clock.getTime())
     results['exp_start_time'] = exp_start_time.strftime('%Y%m%d-%H%M%S')
+
+    with open(start_fn, 'w') as f:
+        json.dump(results, f)   # in case the experiment is terminated prematurely
 
     for stim_name, start_time, end_time in run_info:
         clip = clips[stim_name]
@@ -71,19 +80,18 @@ if __name__ == '__main__':
 
     end_time += 18
     while clock.getTime() < end_time:
+        keys = event.getKeys(timeStamped=clock)
+        for key, time in keys:
+            if key in ['1', '2', '3', '4', '5']:
+                results['key_events'].append([key, time])
         fixation.draw()
         win.flip()
-
-    keys = event.getKeys(timeStamped=clock)
-    for key, time in keys:
-        if key in ['1', '2', '3', '4', '5']:
-            results['key_events'].append([key, time])
 
     exp_end_time = exp_start_time + timedelta(seconds=clock.getTime())
     results['exp_end_time'] = exp_end_time.strftime('%Y%m%d-%H%M%S')
     print(exp_start_time, exp_end_time)
 
-    with open(out_fn, 'w') as f:
+    with open(finish_fn, 'w') as f:
         json.dump(results, f)
 
     win.close()
